@@ -32,5 +32,14 @@ namespace ET
 		 public const ushort M2C_TestRobotCase = 10029;
 		 public const ushort C2M_TransferMap = 10030;
 		 public const ushort M2C_TransferMap = 10031;
+		 public const ushort C2A_TestLoginAccount = 10032;
+		 public const ushort A2C_TestLoginAccount = 10033;
+		 public const ushort A2C_Diconnect = 10034;
+		 public const ushort C2A_GetServerInfos = 10035;
+		 public const ushort A2C_GetServerInfos = 10036;
+		 public const ushort ServerInfoProto = 10037;
+		 public const ushort RoleInfoProto = 10038;
+		 public const ushort C2A_CreateRole = 10039;
+		 public const ushort A2C_CreateRole = 10040;
 	}
 }

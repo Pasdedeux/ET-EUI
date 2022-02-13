@@ -91,8 +91,17 @@ namespace ET
 
             string dllPath = Path.Combine(Define.BuildOutputDir, $"{assemblyName}.dll");
             string pdbPath = Path.Combine(Define.BuildOutputDir, $"{assemblyName}.pdb");
-            File.Delete(dllPath);
-            File.Delete(pdbPath);
+
+            try
+            {
+                File.Delete(dllPath);
+                File.Delete(pdbPath);
+            }
+            catch (Exception)
+            {
+
+            }
+            
 
             Directory.CreateDirectory(Define.BuildOutputDir);
 

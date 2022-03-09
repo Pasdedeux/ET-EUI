@@ -595,22 +595,22 @@ namespace ET
 		[ProtoMember(1)]
 		public long Id { get; set; }
 
-		[ProtoMember(1)]
+		[ProtoMember(2)]
 		public string Name { get; set; }
 
-		[ProtoMember(2)]
+		[ProtoMember(3)]
 		public int ServerId { get; set; }
 
-		[ProtoMember(3)]
+		[ProtoMember(4)]
 		public int State { get; set; }
 
-		[ProtoMember(4)]
+		[ProtoMember(5)]
 		public long AccountId { get; set; }
 
-		[ProtoMember(5)]
+		[ProtoMember(6)]
 		public long LastLoginTime { get; set; }
 
-		[ProtoMember(6)]
+		[ProtoMember(7)]
 		public long CreateTime { get; set; }
 
 	}
@@ -652,6 +652,225 @@ namespace ET
 
 		[ProtoMember(1)]
 		public RoleInfoProto RoleInfoProto { get; set; }
+
+	}
+
+	[ResponseType(nameof(A2C_GetRoles))]
+	[Message(OuterOpcode.C2A_GetRoles)]
+	[ProtoContract]
+	public partial class C2A_GetRoles: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string Token { get; set; }
+
+		[ProtoMember(2)]
+		public long AccountId { get; set; }
+
+		[ProtoMember(3)]
+		public int ServerId { get; set; }
+
+	}
+
+	[Message(OuterOpcode.A2C_GetRoles)]
+	[ProtoContract]
+	public partial class A2C_GetRoles: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public List<RoleInfoProto> RoleInfo = new List<RoleInfoProto>();
+
+	}
+
+	[ResponseType(nameof(A2C_DeleteRole))]
+	[Message(OuterOpcode.C2A_DeleteRole)]
+	[ProtoContract]
+	public partial class C2A_DeleteRole: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string Token { get; set; }
+
+		[ProtoMember(2)]
+		public long AccountId { get; set; }
+
+		[ProtoMember(3)]
+		public long RoleInfoId { get; set; }
+
+		[ProtoMember(4)]
+		public int ServerId { get; set; }
+
+	}
+
+	[Message(OuterOpcode.A2C_DeleteRole)]
+	[ProtoContract]
+	public partial class A2C_DeleteRole: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public long DeleteRoleInfoId { get; set; }
+
+	}
+
+	[ResponseType(nameof(A2C_GetRealmKey))]
+	[Message(OuterOpcode.C2A_GetRealmKey)]
+	[ProtoContract]
+	public partial class C2A_GetRealmKey: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string Token { get; set; }
+
+		[ProtoMember(2)]
+		public int ServerId { get; set; }
+
+		[ProtoMember(3)]
+		public long AccountId { get; set; }
+
+	}
+
+	[Message(OuterOpcode.A2C_GetRealmKey)]
+	[ProtoContract]
+	public partial class A2C_GetRealmKey: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public string RealmKey { get; set; }
+
+		[ProtoMember(2)]
+		public string RealmAddress { get; set; }
+
+	}
+
+	[ResponseType(nameof(R2C_LoginRealm))]
+	[Message(OuterOpcode.C2R_LoginRealm)]
+	[ProtoContract]
+	public partial class C2R_LoginRealm: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public long AccountId { get; set; }
+
+		[ProtoMember(2)]
+		public string RealmTokenKey { get; set; }
+
+	}
+
+	[Message(OuterOpcode.R2C_LoginRealm)]
+	[ProtoContract]
+	public partial class R2C_LoginRealm: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public string GateSessionKey { get; set; }
+
+		[ProtoMember(2)]
+		public string GateAddress { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2C_LogingGameGate))]
+	[Message(OuterOpcode.C2G_LogingGameGate)]
+	[ProtoContract]
+	public partial class C2G_LogingGameGate: Object, IRequest
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(1)]
+		public string Key { get; set; }
+
+		[ProtoMember(2)]
+		public long RoleId { get; set; }
+
+		[ProtoMember(3)]
+		public long Account { get; set; }
+
+	}
+
+	[Message(OuterOpcode.G2C_LogingGameGate)]
+	[ProtoContract]
+	public partial class G2C_LogingGameGate: Object, IResponse
+	{
+		[ProtoMember(90)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(91)]
+		public int Error { get; set; }
+
+		[ProtoMember(92)]
+		public string Message { get; set; }
+
+		[ProtoMember(1)]
+		public long PlayerId { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2C_EnterGame))]
+	[Message(OuterOpcode.C2G_EnterGame)]
+	[ProtoContract]
+	public partial class C2G_EnterGame: Object, IRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(OuterOpcode.G2C_EnterGame)]
+	[ProtoContract]
+	public partial class G2C_EnterGame: Object, IResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public long MyId { get; set; }
 
 	}
 

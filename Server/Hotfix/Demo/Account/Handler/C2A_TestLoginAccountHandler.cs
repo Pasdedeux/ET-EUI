@@ -131,7 +131,7 @@ namespace ET
                     //获取此用户ID对应的Session信息，断开其Session连接
                     long accountSessionInstanceId = session.DomainScene().GetComponent<AccountSessionsComponent>().Get(account.Id);
                     var otherSession = Game.EventSystem.Get(accountSessionInstanceId) as Session;
-                    otherSession?.Send(new A2C_Diconnect() { Error = 0 });
+                    otherSession?.Send(new A2C_Diconnect() { Error = 0 }); 
                     otherSession?.Disconnect().Coroutine();
                     session.DomainScene().GetComponent<AccountSessionsComponent>().Add(account.Id, session.InstanceId);
                     session.AddComponent<AccountCheckOutTimeComponent, long>(account.Id);

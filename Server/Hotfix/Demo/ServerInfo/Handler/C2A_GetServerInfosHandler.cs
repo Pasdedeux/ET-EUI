@@ -43,8 +43,8 @@ namespace ET
                 return;
             }
 
-
-            foreach (var item in session.GetComponent<ServerInfoManagerComponent>().ServerInfos)
+            var sompo = session.DomainScene().GetComponent<ServerInfoManagerComponent>();
+            foreach (var item in sompo.ServerInfos)
             {
                 response.ServerInfoProtoList.Add(item.ToMessage());
             }

@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using LitFramework;
+using ET;
 /// <summary>
 /// ====该类自动生成请勿手动修改====
 /// Author : Derek Liu
 /// </summary>
-public partial class StartSceneConfig
+public partial class RobotsConfig
 {
 	/// <summary>
 	/// Id
@@ -38,13 +39,13 @@ public partial class StartSceneConfig
 	/// </summary>
 	/// <param name="config">配置文件数据</param>
 	/// <returns>数据列表</returns>
-	public static Dictionary<int, StartSceneConfig> ReturnDictionary(string csv)
+	public static Dictionary<int, RobotsConfig> ReturnDictionary(string csv)
 	{
-		Dictionary<int, StartSceneConfig> vec = new Dictionary<int, StartSceneConfig>();
+		Dictionary<int, RobotsConfig> vec = new Dictionary<int, RobotsConfig>();
 		CSVReader reader = new CSVReader(csv);
 		for (int i = 3; i < reader.Row; i++)
 		{
-			StartSceneConfig item = new StartSceneConfig();
+			RobotsConfig item = new RobotsConfig();
 			int.TryParse(reader.GetData(0, i), out int paras0);
 			item.Id = paras0;
 			int.TryParse(reader.GetData(1, i), out int paras1);
@@ -61,7 +62,7 @@ public partial class StartSceneConfig
 			}
 			catch (Exception e)
 			{
-				LDebug.LogError($"{e.Message} 表: StartSceneConfig 行: {i}列: Id", LogColor.red); 
+				Log.Error($"{e.Message} 表: RobotsConfig 行: {i}列: Id", LogColor.red); 
 			}
 		}
 		return vec;

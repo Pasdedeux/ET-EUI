@@ -1,80 +1,68 @@
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using MongoDB.Bson.Serialization.Attributes;
-using ProtoBuf;
-
-namespace ET
+using LitFramework;
+/// <summary>
+/// ====该类自动生成请勿手动修改====
+/// Author : Derek Liu
+/// </summary>
+public partial class ServerInfoConfig
 {
-    [ProtoContract]
-    [Config]
-    public partial class ServerInfoConfigCategory : ProtoObject
-    {
-        public static ServerInfoConfigCategory Instance;
-		
-        [ProtoIgnore]
-        [BsonIgnore]
-        private Dictionary<int, ServerInfoConfig> dict = new Dictionary<int, ServerInfoConfig>();
-		
-        [BsonElement]
-        [ProtoMember(1)]
-        private List<ServerInfoConfig> list = new List<ServerInfoConfig>();
-		
-        public ServerInfoConfigCategory()
-        {
-            Instance = this;
-        }
-		
-        public override void EndInit()
-        {
-            foreach (ServerInfoConfig config in list)
-            {
-                config.EndInit();
-                this.dict.Add(config.Id, config);
-            }            
-            this.AfterEndInit();
-        }
-		
-        public ServerInfoConfig Get(int id)
-        {
-            this.dict.TryGetValue(id, out ServerInfoConfig item);
-
-            if (item == null)
-            {
-                throw new Exception($"配置找不到，配置表名: {nameof (ServerInfoConfig)}，配置id: {id}");
-            }
-
-            return item;
-        }
-		
-        public bool Contain(int id)
-        {
-            return this.dict.ContainsKey(id);
-        }
-
-        public Dictionary<int, ServerInfoConfig> GetAll()
-        {
-            return this.dict;
-        }
-
-        public ServerInfoConfig GetOne()
-        {
-            if (this.dict == null || this.dict.Count <= 0)
-            {
-                return null;
-            }
-            return this.dict.Values.GetEnumerator().Current;
-        }
-    }
-
-    [ProtoContract]
-	public partial class ServerInfoConfig: ProtoObject, IConfig
+	/// <summary>
+	/// Id
+	/// </summary>
+	public int Id { get; private set; }
+	/// <summary>
+	/// 区服名称
+	/// </summary>
+	public string ServerName { get; private set; }
+	/// <summary>
+	/// 区服描述
+	/// </summary>
+	public string ServerDesc { get; private set; }
+	
+	/// <summary>
+	/// 读取配置文件
+	/// </summary>
+	/// <param name="config">配置文件数据</param>
+	/// <returns>数据列表</returns>
+	public static Dictionary<int, ServerInfoConfig> ReturnDictionary(string csv)
 	{
-		[ProtoMember(1)]
-		public int Id { get; set; }
-		[ProtoMember(2)]
-		public string ServerName { get; set; }
-		[ProtoMember(3)]
-		public string ServerDesc { get; set; }
-
+		Dictionary<int, ServerInfoConfig> vec = new Dictionary<int, ServerInfoConfig>();
+		CSVReader reader = new CSVReader(csv);
+		for (int i = 3; i < reader.Row; i++)
+		{
+			ServerInfoConfig item = new ServerInfoConfig();
+			int.TryParse(reader.GetData(0, i), out int paras0);
+			item.Id = paras0;
+			item.ServerName = reader.GetData(1, i);
+			item.ServerDesc = reader.GetData(2, i);
+			try
+			{
+				vec.Add(item.Id, item);
+			}
+			catch (Exception e)
+			{
+				//LDebug.LogError($"{e.Message} 表: ServerInfoConfig 行: {i}列: Id", LogColor.red); 
+			}
+		}
+		return vec;
 	}
+	
+	/// <summary>
+	/// 解析Vector3
+	/// </summary>
+	/// <param name="string">配置文件数据</param>
+	/// <returns>Vector3</returns>
+	static Vector3 ParseVector3(string str)
+	{
+		str = str.Substring(1, str.Length - 2);
+		str.Replace(" ", "");
+		string[] splits = str.Split(',');
+		float x = float.Parse(splits[0]);
+		float y = float.Parse(splits[1]);
+		float z = float.Parse(splits[2]);
+		return new Vector3(x, y, z);
+	}
+	
 }

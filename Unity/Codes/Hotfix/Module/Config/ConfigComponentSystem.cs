@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ET
@@ -49,22 +51,58 @@ namespace ET
 		
 		public static async ETTask LoadAsync(this ConfigComponent self)
 		{
-			self.AllConfig.Clear();
-			HashSet<Type> types = Game.EventSystem.GetTypes(typeof (ConfigAttribute));
-			
-			Dictionary<string, byte[]> configBytes = new Dictionary<string, byte[]>();
-			self.ConfigLoader.GetAllConfigBytes(configBytes);
+			//self.AllConfig.Clear();
+			//HashSet<Type> types = Game.EventSystem.GetTypes(typeof (ConfigAttribute));
 
-			using (ListComponent<Task> listTasks = ListComponent<Task>.Create())
+			//Dictionary<string, byte[]> configBytes = new Dictionary<string, byte[]>();
+			//self.ConfigLoader.GetAllConfigBytes(configBytes);
+
+			//using (ListComponent<Task> listTasks = ListComponent<Task>.Create())
+			//{
+			//	foreach (Type type in types)
+			//	{
+			//		Task task = Task.Run(() => self.LoadOneInThread(type, configBytes));
+			//		listTasks.Add(task);
+			//	}
+
+			//	await Task.WhenAll(listTasks.ToArray());
+			//}
+
+
+			//完成配置表加载与使用
+
+			foreach (string file in Directory.GetFiles($"../Server/Configs", "*.csv"))
 			{
-				foreach (Type type in types)
-				{
-					Task task = Task.Run(() => self.LoadOneInThread(type, configBytes));
-					listTasks.Add(task);
-				}
+				Log.Info(file);
+				string key = Path.GetFileNameWithoutExtension(file);
+				var content = File.ReadAllText(file);
+                List<string> csvKeys = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-				await Task.WhenAll(listTasks.ToArray());
+				for (int i = 1; i < csvKeys.Count; i++)
+				{
+					string item = csvKeys[i].Split(',')[0];
+					if (!item.EndsWith(".csv")) continue;
+
+					//localPath = FrameworkConfig.Instance.UsePersistantPath ? AssetPathManager.Instance.GetPersistentDataPath(item) : AssetPathManager.Instance.GetStreamAssetDataPath(item);
+					//DocumentAccessor.LoadAsset(localPath, (string e) =>
+					//{
+					//	var contens = item.Split('/');
+					//	string className = (contens.Length > 1 ? contens[1] : contens[0]).Split('.')[0];
+					//	string strMethod = "ReturnDictionary";
+
+					//	//正常情况下，通过域内反射获取到对应类及静态方法
+					//	if (FrameworkConfig.Instance.scriptEnvironment != RunEnvironment.ILRuntime)
+					//		Assets.Scripts.DotNetScriptCall.SetConfigInstall(className, strMethod, e);
+					//	//热更情况下，通过热更接口获取到内部配置档类及方法
+					//	else
+					//		Assets.Scripts.ILRScriptCall.SetConfigInstall(className, strMethod, e);
+
+					//	Log.Info(string.Format("配置档解析完成-> {0}", item));
+					//});
+				}
 			}
+
+			await ETTask.CompletedTask;
 		}
 
 		private static void LoadOneInThread(this ConfigComponent self, Type configType, Dictionary<string, byte[]> configBytes)

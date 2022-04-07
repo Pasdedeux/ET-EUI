@@ -1,0 +1,37 @@
+﻿#region << 版 本 注 释 >>
+///*----------------------------------------------------------------
+// Author : Derek Liu
+// 备注：由模板工具自动生成
+///----------------------------------------------------------------*/
+#endregion
+
+//*******************************************************************
+//**                  该类由工具自动生成，请勿手动修改                   **
+//*******************************************************************
+
+using System.Linq;
+using System.Collections.Generic;
+public static partial class Configs
+{
+	public static Dictionary<int, AIConfig> AIConfigDict;
+	public static List<AIConfig> AIConfigList;
+	public static Dictionary<int, StartMachineConfig> StartMachineConfigDict;
+	public static List<StartMachineConfig> StartMachineConfigList;
+	public static Dictionary<int, StartProcessConfig> StartProcessConfigDict;
+	public static List<StartProcessConfig> StartProcessConfigList;
+	public static Dictionary<int, StartSceneConfig> StartSceneConfigDict;
+	public static List<StartSceneConfig> StartSceneConfigList;
+	public static Dictionary<int, StartZoneConfig> StartZoneConfigDict;
+	public static List<StartZoneConfig> StartZoneConfigList;
+	public static Dictionary<int, UnitConfig> UnitConfigDict;
+	public static List<UnitConfig> UnitConfigList;
+	public static void Install()
+	{
+		AIConfigList = AIConfigDict.Values.ToList();
+		StartMachineConfigList = StartMachineConfigDict.Values.ToList();
+		StartProcessConfigList = StartProcessConfigDict.Values.ToList();
+		StartSceneConfigList = StartSceneConfigDict.Values.ToList();
+		StartZoneConfigList = StartZoneConfigDict.Values.ToList();
+		UnitConfigList = UnitConfigDict.Values.ToList();
+	}
+}

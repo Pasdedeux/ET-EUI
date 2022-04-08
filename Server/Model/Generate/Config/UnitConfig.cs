@@ -1,88 +1,92 @@
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using MongoDB.Bson.Serialization.Attributes;
-using ProtoBuf;
-
-namespace ET
+using ET;
+/// <summary>
+/// ====该类自动生成请勿手动修改====
+/// Author : Derek Liu
+/// </summary>
+public partial class UnitConfig
 {
-    [ProtoContract]
-    [Config]
-    public partial class UnitConfigCategory : ProtoObject
-    {
-        public static UnitConfigCategory Instance;
-		
-        [ProtoIgnore]
-        [BsonIgnore]
-        private Dictionary<int, UnitConfig> dict = new Dictionary<int, UnitConfig>();
-		
-        [BsonElement]
-        [ProtoMember(1)]
-        private List<UnitConfig> list = new List<UnitConfig>();
-		
-        public UnitConfigCategory()
-        {
-            Instance = this;
-        }
-		
-        public override void EndInit()
-        {
-            foreach (UnitConfig config in list)
-            {
-                config.EndInit();
-                this.dict.Add(config.Id, config);
-            }            
-            this.AfterEndInit();
-        }
-		
-        public UnitConfig Get(int id)
-        {
-            this.dict.TryGetValue(id, out UnitConfig item);
-
-            if (item == null)
-            {
-                throw new Exception($"配置找不到，配置表名: {nameof (UnitConfig)}，配置id: {id}");
-            }
-
-            return item;
-        }
-		
-        public bool Contain(int id)
-        {
-            return this.dict.ContainsKey(id);
-        }
-
-        public Dictionary<int, UnitConfig> GetAll()
-        {
-            return this.dict;
-        }
-
-        public UnitConfig GetOne()
-        {
-            if (this.dict == null || this.dict.Count <= 0)
-            {
-                return null;
-            }
-            return this.dict.Values.GetEnumerator().Current;
-        }
-    }
-
-    [ProtoContract]
-	public partial class UnitConfig: ProtoObject, IConfig
+	/// <summary>
+	/// Id
+	/// </summary>
+	public int Id { get; private set; }
+	/// <summary>
+	/// Type
+	/// </summary>
+	public int Type { get; private set; }
+	/// <summary>
+	/// 名字
+	/// </summary>
+	public string Name { get; private set; }
+	/// <summary>
+	/// 描述
+	/// </summary>
+	public string Desc { get; private set; }
+	/// <summary>
+	/// 位置
+	/// </summary>
+	public int Position { get; private set; }
+	/// <summary>
+	/// 身高
+	/// </summary>
+	public int Height { get; private set; }
+	/// <summary>
+	/// 体重
+	/// </summary>
+	public int Weight { get; private set; }
+	
+	/// <summary>
+	/// 读取配置文件
+	/// </summary>
+	/// <param name="config">配置文件数据</param>
+	/// <returns>数据列表</returns>
+	public static Dictionary<int, UnitConfig> ReturnDictionary(string csv)
 	{
-		[ProtoMember(1)]
-		public int Id { get; set; }
-		[ProtoMember(2)]
-		public int Type { get; set; }
-		[ProtoMember(4)]
-		public string Name { get; set; }
-		[ProtoMember(5)]
-		public string Desc { get; set; }
-		[ProtoMember(6)]
-		public int Position { get; set; }
-		[ProtoMember(7)]
-		public int Height { get; set; }
-		[ProtoMember(8)]
-		public int Weight { get; set; }
-
+		Dictionary<int, UnitConfig> vec = new Dictionary<int, UnitConfig>();
+		CSVReader reader = new CSVReader(csv);
+		for (int i = 3; i < reader.Row; i++)
+		{
+			UnitConfig item = new UnitConfig();
+			int.TryParse(reader.GetData(0, i), out int paras0);
+			item.Id = paras0;
+			int.TryParse(reader.GetData(1, i), out int paras1);
+			item.Type = paras1;
+			item.Name = reader.GetData(2, i);
+			item.Desc = reader.GetData(3, i);
+			int.TryParse(reader.GetData(4, i), out int paras4);
+			item.Position = paras4;
+			int.TryParse(reader.GetData(5, i), out int paras5);
+			item.Height = paras5;
+			int.TryParse(reader.GetData(6, i), out int paras6);
+			item.Weight = paras6;
+			try
+			{
+				vec.Add(item.Id, item);
+			}
+			catch (Exception e)
+			{
+				Log.Error($"{e.Message} 表: UnitConfig 行: {i}列: Id"); 
+			}
+		}
+		return vec;
 	}
+	
+	/// <summary>
+	/// 解析Vector3
+	/// </summary>
+	/// <param name="string">配置文件数据</param>
+	/// <returns>Vector3</returns>
+	static Vector3 ParseVector3(string str)
+	{
+		str = str.Substring(1, str.Length - 2);
+		str.Replace(" ", "");
+		string[] splits = str.Split(',');
+		float x = float.Parse(splits[0]);
+		float y = float.Parse(splits[1]);
+		float z = float.Parse(splits[2]);
+		return new Vector3(x, y, z);
+	}
+	
 }

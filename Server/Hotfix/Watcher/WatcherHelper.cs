@@ -10,7 +10,8 @@ namespace ET
         {
             string[] localIP = NetworkHelper.GetAddressIPs();
             StartMachineConfig startMachineConfig = null;
-            foreach (StartMachineConfig config in StartMachineConfigCategory.Instance.GetAll().Values)
+            //TODO
+            foreach (StartMachineConfig config in Configs.StartMachineConfigDict.Values /*StartMachineConfigCategory.Instance.GetAll().Values*/)
             {
                 if (!WatcherHelper.IsThisMachine(config.InnerIP, localIP))
                 {
@@ -39,7 +40,8 @@ namespace ET
         
         public static Process StartProcess(int processId, int createScenes = 0)
         {
-            StartProcessConfig startProcessConfig = StartProcessConfigCategory.Instance.Get(processId);
+            //TODO
+            StartProcessConfig startProcessConfig = Configs.StartProcessConfigDict[processId];// StartProcessConfigCategory.Instance.Get(processId);
             const string exe = "dotnet";
             string arguments = $"{startProcessConfig.AppName}.dll" + 
                     $" --Process={startProcessConfig.Id}" +

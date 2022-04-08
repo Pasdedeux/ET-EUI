@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 
 namespace ET
 {
@@ -19,8 +19,9 @@ namespace ET
 			// 这里可以从DB中加载Unit
 			Unit unit = UnitFactory.Create(scene, player.Id, UnitType.Player);
 			unit.AddComponent<UnitGateComponent, long>(session.InstanceId);
-			
-			StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Map1");
+
+			//TODO
+			StartSceneConfig startSceneConfig = Configs.StartSceneConfigDict.Values.Where(e => e.Zone == session.DomainZone() && e.Name == "Map1").First();// StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Map1");
 			response.MyId = player.Id;
 			reply();
 			

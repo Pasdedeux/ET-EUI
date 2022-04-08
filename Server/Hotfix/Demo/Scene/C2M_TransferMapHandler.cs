@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ET
 {
@@ -20,7 +21,8 @@ namespace ET
 				toMap = "Map1";
 			}
 
-			StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(unit.DomainScene().Zone, toMap);
+			//TODO
+			StartSceneConfig startSceneConfig = Configs.StartSceneConfigDict.Values.Where(e => e.Zone == unit.DomainScene().Zone && e.Name == toMap).First();// //StartSceneConfigCategory.Instance.GetBySceneName(unit.DomainScene().Zone, toMap);
 			TransferHelper.Transfer(unit, startSceneConfig.InstanceId, toMap).Coroutine();
 			
 			reply();

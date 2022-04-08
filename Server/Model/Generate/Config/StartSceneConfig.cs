@@ -1,27 +1,132 @@
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using MongoDB.Bson.Serialization.Attributes;
-using ProtoBuf;
+using ET;
+using System.Net;
 
-namespace ET
+/// <summary>
+/// ====该类自动生成请勿手动修改====
+/// Author : Derek Liu
+/// </summary>
+public partial class StartSceneConfig
 {
-    
+	/// <summary>
+	/// Id
+	/// </summary>
+	public int Id { get; private set; }
+	/// <summary>
+	/// 所属进程
+	/// </summary>
+	public int Process { get; private set; }
+	/// <summary>
+	/// 所属区
+	/// </summary>
+	public int Zone { get; private set; }
+	/// <summary>
+	/// 类型
+	/// </summary>
+	public string SceneType { get; private set; }
+	/// <summary>
+	/// 名字
+	/// </summary>
+	public string Name { get; private set; }
+	/// <summary>
+	/// 外网端口
+	/// </summary>
+	public int OuterPort { get; private set; }
 
-    [ProtoContract]
-	public partial class StartSceneConfig: ProtoObject, IConfig
+	public long InstanceId
 	{
-		[ProtoMember(1)]
-		public int Id { get; set; }
-		[ProtoMember(2)]
-		public int Process { get; set; }
-		[ProtoMember(3)]
-		public int Zone { get; set; }
-		[ProtoMember(4)]
-		public string SceneType { get; set; }
-		[ProtoMember(5)]
-		public string Name { get; set; }
-		[ProtoMember(6)]
-		public int OuterPort { get; set; }
-
+		get
+		{
+			this.Type = EnumHelper.FromString<SceneType>(this.SceneType);
+			InstanceIdStruct instanceIdStruct = new InstanceIdStruct(this.Process, (uint)this.Id);
+			return instanceIdStruct.ToLong();
+		}
 	}
+
+	public SceneType Type;
+
+	// 内网地址外网端口，通过防火墙映射端口过来
+	private IPEndPoint innerIPOutPort;
+
+	public IPEndPoint InnerIPOutPort
+	{
+		get
+		{
+			if (innerIPOutPort == null)
+			{
+				this.innerIPOutPort = NetworkHelper.ToIPEndPoint($"{Configs.StartProcessConfigDict[this.Process].InnerIP}:{this.OuterPort}");
+			}
+
+			return this.innerIPOutPort;
+		}
+	}
+
+	private IPEndPoint outerIPPort;
+
+	// 外网地址外网端口
+	public IPEndPoint OuterIPPort
+	{
+		get
+		{
+			if (this.outerIPPort == null)
+			{
+				this.outerIPPort = NetworkHelper.ToIPEndPoint($"{Configs.StartProcessConfigDict[this.Process].OuterIP}:{this.OuterPort}");
+			}
+
+			return this.outerIPPort;
+		}
+	}
+
+	/// <summary>
+	/// 读取配置文件
+	/// </summary>
+	/// <param name="config">配置文件数据</param>
+	/// <returns>数据列表</returns>
+	public static Dictionary<int, StartSceneConfig> ReturnDictionary(string csv)
+	{
+		Dictionary<int, StartSceneConfig> vec = new Dictionary<int, StartSceneConfig>();
+		CSVReader reader = new CSVReader(csv);
+		for (int i = 3; i < reader.Row; i++)
+		{
+			StartSceneConfig item = new StartSceneConfig();
+			int.TryParse(reader.GetData(0, i), out int paras0);
+			item.Id = paras0;
+			int.TryParse(reader.GetData(1, i), out int paras1);
+			item.Process = paras1;
+			int.TryParse(reader.GetData(2, i), out int paras2);
+			item.Zone = paras2;
+			item.SceneType = reader.GetData(3, i);
+			item.Name = reader.GetData(4, i);
+			int.TryParse(reader.GetData(5, i), out int paras5);
+			item.OuterPort = paras5;
+			try
+			{
+				vec.Add(item.Id, item);
+			}
+			catch (Exception e)
+			{
+				Log.Error($"{e.Message} 表: StartSceneConfig 行: {i}列: Id"); 
+			}
+		}
+		return vec;
+	}
+	
+	/// <summary>
+	/// 解析Vector3
+	/// </summary>
+	/// <param name="string">配置文件数据</param>
+	/// <returns>Vector3</returns>
+	static Vector3 ParseVector3(string str)
+	{
+		str = str.Substring(1, str.Length - 2);
+		str.Replace(" ", "");
+		string[] splits = str.Split(',');
+		float x = float.Parse(splits[0]);
+		float y = float.Parse(splits[1]);
+		float z = float.Parse(splits[2]);
+		return new Vector3(x, y, z);
+	}
+	
 }

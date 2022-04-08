@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 
 namespace ET
 {
@@ -7,11 +7,12 @@ namespace ET
 	{
 		public static StartSceneConfig GetGate(int zone)
 		{
-			List<StartSceneConfig> zoneGates = StartSceneConfigCategory.Instance.Gates[zone];
+			//TODO
+			var zoneGates = Configs.StartSceneConfigDict.Values.Where(e => e.Zone == zone);// StartSceneConfigCategory.Instance.Gates[zone];
 			
-			int n = RandomHelper.RandomNumber(0, zoneGates.Count);
+			int n = RandomHelper.RandomNumber(0, zoneGates.Count());
 
-			return zoneGates[n];
+			return zoneGates.ElementAt(n);
 		}
 	}
 }

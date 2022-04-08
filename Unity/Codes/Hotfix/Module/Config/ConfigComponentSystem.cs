@@ -71,7 +71,6 @@ namespace ET
 
 
 			//完成配置表加载与使用
-
 			foreach (string file in Directory.GetFiles($"../Server/Configs", "*.csv"))
 			{
 				string className = Path.GetFileNameWithoutExtension(file);
@@ -89,7 +88,7 @@ namespace ET
 				props.SetValue(props, finalType);
 
 
-				//            List<string> csvKeys = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				//List<string> csvKeys = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 				//for (int i = 1; i < csvKeys.Count; i++)
 				//{
 				//	string item = csvKeys[i].Split(',')[0];
@@ -113,6 +112,11 @@ namespace ET
 				//	//});
 				//}
 			}
+
+			//启动Configs.Install方法
+			var configClass = Type.GetType("Configs", true);
+			var configMethod = configClass.GetMethod("Install");
+			configMethod.Invoke(null, null);
 
 			await ETTask.CompletedTask;
 		}

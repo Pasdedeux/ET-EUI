@@ -1,16 +1,17 @@
 using System;
 using System.Net;
+using System.Linq;
 
 namespace ET
 {
-    public class AppStart_Init: AEvent<EventType.AppStart>
+    public class AppStart_Init : AEvent<EventType.AppStart>
     {
         protected override async ETTask Run(EventType.AppStart args)
         {
             Game.Scene.AddComponent<ConfigComponent>();
             await ConfigComponent.Instance.LoadAsync();
 
-            StartProcessConfig processConfig = StartProcessConfigCategory.Instance.Get(Game.Options.Process);
+            StartProcessConfig processConfig = Configs.StartProcessConfigDict[Game.Options.Process];
 
             Game.Scene.AddComponent<TimerComponent>();
             Game.Scene.AddComponent<OpcodeTypeComponent>();
@@ -26,34 +27,35 @@ namespace ET
             Game.Scene.AddComponent<ActorMessageDispatcherComponent>();
             // 数值订阅组件
             Game.Scene.AddComponent<NumericWatcherComponent>();
-            
+
             Game.Scene.AddComponent<NetThreadComponent>();
-            
+
             Game.Scene.AddComponent<NavmeshComponent, Func<string, byte[]>>(RecastFileReader.Read);
 
             switch (Game.Options.AppType)
             {
                 case AppType.Server:
-                {
-                    Game.Scene.AddComponent<NetInnerComponent, IPEndPoint, int>(processConfig.InnerIPPort, SessionStreamDispatcherType.SessionStreamDispatcherServerInner);
-
-                    var processScenes = StartSceneConfigCategory.Instance.GetByProcess(Game.Options.Process);
-                    foreach (StartSceneConfig startConfig in processScenes)
                     {
-                        await SceneFactory.Create(Game.Scene, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
-                            startConfig.Type, startConfig);
-                    }
+                        Game.Scene.AddComponent<NetInnerComponent, IPEndPoint, int>(processConfig.InnerIPPort, SessionStreamDispatcherType.SessionStreamDispatcherServerInner);
 
-                    break;
-                }
+                        //TODO
+                        var processScenes = Configs.StartSceneConfigDict.Values.Where(e => e.Process == Options.Instance.Process);
+                        foreach (StartSceneConfig startConfig in processScenes)
+                        {
+                            await SceneFactory.Create(Game.Scene, startConfig.Id, startConfig.InstanceId, startConfig.Zone, startConfig.Name,
+                                startConfig.Type, startConfig);
+                        }
+
+                        break;
+                    }
                 case AppType.Watcher:
-                {
-                    StartMachineConfig startMachineConfig = WatcherHelper.GetThisMachineConfig();
-                    WatcherComponent watcherComponent = Game.Scene.AddComponent<WatcherComponent>();
-                    watcherComponent.Start(Game.Options.CreateScenes);
-                    Game.Scene.AddComponent<NetInnerComponent, IPEndPoint, int>(NetworkHelper.ToIPEndPoint($"{startMachineConfig.InnerIP}:{startMachineConfig.WatcherPort}"), SessionStreamDispatcherType.SessionStreamDispatcherServerInner);
-                    break;
-                }
+                    {
+                        StartMachineConfig startMachineConfig = WatcherHelper.GetThisMachineConfig();
+                        WatcherComponent watcherComponent = Game.Scene.AddComponent<WatcherComponent>();
+                        watcherComponent.Start(Game.Options.CreateScenes);
+                        Game.Scene.AddComponent<NetInnerComponent, IPEndPoint, int>(NetworkHelper.ToIPEndPoint($"{startMachineConfig.InnerIP}:{startMachineConfig.WatcherPort}"), SessionStreamDispatcherType.SessionStreamDispatcherServerInner);
+                        break;
+                    }
                 case AppType.GameTool:
                     break;
             }

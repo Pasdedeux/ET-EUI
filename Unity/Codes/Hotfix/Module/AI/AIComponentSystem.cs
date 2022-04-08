@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Linq;
 
 namespace ET
 {
@@ -51,9 +52,9 @@ namespace ET
                 return;
             }
 
-            var oneAI = AIConfigCategory.Instance.AIConfigs[self.AIConfigId];
-
-            foreach (AIConfig aiConfig in oneAI.Values)
+            //TODO
+            var oneAI = Configs.AIConfigDict.Values.Where(e => e.AIConfigId == self.AIConfigId);// AIConfigCategory.Instance.AIConfigs[self.AIConfigId];
+            foreach (AIConfig aiConfig in oneAI/*.Values*/)
             {
 
                 AIDispatcherComponent.Instance.AIHandlers.TryGetValue(aiConfig.Name, out AAIHandler aaiHandler);

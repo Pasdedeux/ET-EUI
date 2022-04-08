@@ -11,8 +11,9 @@ namespace ET
         [BsonIgnore]
         public UnitType Type => (UnitType)this.Config.Type;
 
+        //TODO
         [BsonIgnore]
-        public UnitConfig Config => UnitConfigCategory.Instance.Get(this.ConfigId);
+        public UnitConfig Config => Configs.UnitConfigDict[this.ConfigId];//  UnitConfigCategory.Instance.Get(this.ConfigId);
 
         private Vector3 position; //坐标
 

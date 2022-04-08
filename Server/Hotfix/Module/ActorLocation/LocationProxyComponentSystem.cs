@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ET
 {
@@ -24,7 +25,9 @@ namespace ET
     {
         private static long GetLocationSceneId(long key)
         {
-            return StartSceneConfigCategory.Instance.LocationConfig.InstanceId;
+            //TODO
+            return Configs.StartSceneConfigDict.Values.Where(e => e.Type == SceneType.Location).First().InstanceId;
+            //return StartSceneConfigCategory.Instance.LocationConfig.InstanceId;
         }
 
         public static async ETTask Add(this LocationProxyComponent self, long key, long instanceId)

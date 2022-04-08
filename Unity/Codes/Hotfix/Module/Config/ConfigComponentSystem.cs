@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ET
@@ -73,33 +74,44 @@ namespace ET
 
 			foreach (string file in Directory.GetFiles($"../Server/Configs", "*.csv"))
 			{
-				Log.Info(file);
-				string key = Path.GetFileNameWithoutExtension(file);
-				var content = File.ReadAllText(file);
-                List<string> csvKeys = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				string className = Path.GetFileNameWithoutExtension(file);
+				string content = File.ReadAllText(file);
+                string methodName = "ReturnDictionary";
 
-				for (int i = 1; i < csvKeys.Count; i++)
-				{
-					string item = csvKeys[i].Split(',')[0];
-					if (!item.EndsWith(".csv")) continue;
+				Type t = Type.GetType(className);
+				MethodInfo method = t.GetMethod(methodName, System.Reflection.BindingFlags.IgnoreCase
+						| System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public
+						| System.Reflection.BindingFlags.Static);
 
-					//localPath = FrameworkConfig.Instance.UsePersistantPath ? AssetPathManager.Instance.GetPersistentDataPath(item) : AssetPathManager.Instance.GetStreamAssetDataPath(item);
-					//DocumentAccessor.LoadAsset(localPath, (string e) =>
-					//{
-					//	var contens = item.Split('/');
-					//	string className = (contens.Length > 1 ? contens[1] : contens[0]).Split('.')[0];
-					//	string strMethod = "ReturnDictionary";
+				var mainClass = Type.GetType("Configs", true);
+				var props = mainClass.GetField(className + "Dict");
+				var finalType = Convert.ChangeType(method.Invoke(null, new object[1] { content }), props.FieldType);
+				props.SetValue(props, finalType);
 
-					//	//正常情况下，通过域内反射获取到对应类及静态方法
-					//	if (FrameworkConfig.Instance.scriptEnvironment != RunEnvironment.ILRuntime)
-					//		Assets.Scripts.DotNetScriptCall.SetConfigInstall(className, strMethod, e);
-					//	//热更情况下，通过热更接口获取到内部配置档类及方法
-					//	else
-					//		Assets.Scripts.ILRScriptCall.SetConfigInstall(className, strMethod, e);
 
-					//	Log.Info(string.Format("配置档解析完成-> {0}", item));
-					//});
-				}
+				//            List<string> csvKeys = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				//for (int i = 1; i < csvKeys.Count; i++)
+				//{
+				//	string item = csvKeys[i].Split(',')[0];
+				//	if (!item.EndsWith(".csv")) continue;
+
+				//	//localPath = FrameworkConfig.Instance.UsePersistantPath ? AssetPathManager.Instance.GetPersistentDataPath(item) : AssetPathManager.Instance.GetStreamAssetDataPath(item);
+				//	//DocumentAccessor.LoadAsset(localPath, (string e) =>
+				//	//{
+				//	//	var contens = item.Split('/');
+				//	//	string className = (contens.Length > 1 ? contens[1] : contens[0]).Split('.')[0];
+				//	//	string strMethod = "ReturnDictionary";
+
+				//	//	//正常情况下，通过域内反射获取到对应类及静态方法
+				//	//	if (FrameworkConfig.Instance.scriptEnvironment != RunEnvironment.ILRuntime)
+				//	//		Assets.Scripts.DotNetScriptCall.SetConfigInstall(className, strMethod, e);
+				//	//	//热更情况下，通过热更接口获取到内部配置档类及方法
+				//	//	else
+				//	//		Assets.Scripts.ILRScriptCall.SetConfigInstall(className, strMethod, e);
+
+				//	//	Log.Info(string.Format("配置档解析完成-> {0}", item));
+				//	//});
+				//}
 			}
 
 			await ETTask.CompletedTask;

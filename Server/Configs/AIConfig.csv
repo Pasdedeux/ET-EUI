@@ -3,3 +3,4 @@ Id,AIConfigId,Order,Name,Desc,NodeParams
 int,int,int,string,string,List<int>
 101,1,1,AI_Attack,攻击,
 102,1,2,AI_XunLuo,巡逻,
+201,2,1,AI_XunLuo,巡逻,

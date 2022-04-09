@@ -7,3 +7,4 @@ int,int,int,string,string,int
 4,1,1,Location,Location,
 5,1,1,Map,Map1,
 6,1,1,Map,Map2,
+200,2,2,Robot,Robot01,

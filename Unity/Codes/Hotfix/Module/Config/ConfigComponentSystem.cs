@@ -77,12 +77,12 @@ namespace ET
 				string content = File.ReadAllText(file);
                 string methodName = "ReturnDictionary";
 
-				Type t = Type.GetType(className);
+				Type t = Game.EventSystem.GetType(className);
 				MethodInfo method = t.GetMethod(methodName, System.Reflection.BindingFlags.IgnoreCase
 						| System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public
 						| System.Reflection.BindingFlags.Static);
 
-				var mainClass = Type.GetType("Configs", true);
+				var mainClass = Game.EventSystem.GetType("Configs");
 				var props = mainClass.GetField(className + "Dict");
 				var finalType = Convert.ChangeType(method.Invoke(null, new object[1] { content }), props.FieldType);
 				props.SetValue(props, finalType);
@@ -114,7 +114,7 @@ namespace ET
 			}
 
 			//Æô¶¯Configs.Install·½·¨
-			var configClass = Type.GetType("Configs", true);
+			var configClass = Game.EventSystem.GetType("Configs");
 			var configMethod = configClass.GetMethod("Install");
 			configMethod.Invoke(null, null);
 

@@ -18,6 +18,7 @@ namespace ET
             Scene scene = EntitySceneFactory.CreateScene(id, instanceId, zone, sceneType, name, parent);
 
             scene.AddComponent<MailBoxComponent, MailboxType>(MailboxType.UnOrderMessageDispatcher);
+            scene.AddComponent<GateSessionKeyComponent>();
 
             switch (scene.SceneType)
             {
@@ -27,7 +28,7 @@ namespace ET
                 case SceneType.Gate:
                     scene.AddComponent<NetKcpComponent, IPEndPoint, int>(startSceneConfig.OuterIPPort, SessionStreamDispatcherType.SessionStreamDispatcherServerOuter);
                     scene.AddComponent<PlayerComponent>();
-                    scene.AddComponent<GateSessionKeyComponent>();
+                    //scene.AddComponent<GateSessionKeyComponent>();
                     break;
                 case SceneType.Map:
                     scene.AddComponent<UnitComponent>();
@@ -35,6 +36,7 @@ namespace ET
                     break;
                 case SceneType.Location:
                     scene.AddComponent<LocationComponent>();
+                   
                     break;
             }
 
